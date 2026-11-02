@@ -1,0 +1,4 @@
+@"
+.env
+*.pyc
+"@ | Set-Content .gitignore
