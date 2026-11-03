@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Grievance Portal | Metropolitan University</title>
+
+    <!-- Load Tailwind CSS for beautiful UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Simple CSS Animation -->
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-blue-50 text-gray-800 font-sans min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Main Card Box -->
+    <div class="bg-white w-full max-w-md rounded-xl shadow-lg overflow-hidden border border-gray-100">
+
+        <!-- Header -->
+        <div class="bg-blue-600 text-white p-6 text-center">
+            <h1 class="text-xl font-bold">Grievance Portal</h1>
+            <p class="text-sm opacity-80 mt-1">Metropolitan University</p>
+        </div>
+
+        <!-- Tab Buttons (Submit / Track) -->
+        <div class="flex border-b">
+            <button onclick="switchTab('submitTab')" id="btn-submitTab"
+                class="w-1/2 py-3 text-center font-semibold text-blue-600 border-b-2 border-blue-600 hover:bg-blue-50 cursor-pointer">
+                Submit Issue
+            </button>
+            <button onclick="switchTab('trackTab')" id="btn-trackTab"
+                class="w-1/2 py-3 text-center font-semibold text-gray-500 hover:text-blue-600 hover:bg-gray-50 cursor-pointer">
+                Track Status
+            </button>
+        </div>
+
+        <div class="p-6">
+
+            <!-- ============================== -->
+            <!-- 1. SUBMIT COMPLAINT SECTION    -->
+            <!-- ============================== -->
+            <div id="submitTab" class="fade-in block">
+
+                <div class="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 text-xs text-gray-700">
+                    <strong>Privacy Notice:</strong> Your submission is anonymous. Do not write your name or student ID
+                    inside the description.
+                </div>
+
+                <form id="grievanceForm" onsubmit="handleSubmission(event)">
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2">Select Category</label>
+                        <select required id="categoryId"
+                            class="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-blue-500 bg-white cursor-pointer">
+                            <option value="">-- Choose an issue --</option>
+                            <option value="1">Sexual Harassment & Gender Bias</option>
+                            <option value="2">Ragging & Bullying</option>
+                            <option value="3">Academic & Teacher Issues</option>
+                            <option value="4">Hall & Campus Facilities</option>
+                            <option value="5">Administrative Harassment</option>
+                            <option value="6">Mental Health & Counseling</option>
+                            <option value="7">Transportation (Varsity Bus)</option>
+                            <option value="8">Other Issues</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2">Issue Details</label>
+                        <textarea required id="description" rows="4" placeholder="Describe your issue anonymously..."
+                            class="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-blue-500 resize-none"></textarea>
+
+                        <!-- Error text if student types only spaces -->
+                        <p id="validationError" class="hidden text-red-500 text-xs mt-1 font-semibold">Please write a
+                            valid description.</p>
+                    </div>
+
+                    <button type="submit" id="submitBtn"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md cursor-pointer">
+                        Submit Anonymously
+                    </button>
+                </form>
+
+                <!-- Success Message Screen -->
+                <div id="successMessage" class="hidden text-center fade-in py-8">
+                    <div class="text-green-500 text-5xl mb-2">✓</div>
+                    <h2 class="text-lg font-bold text-gray-800">Submitted Successfully!</h2>
+                    <p class="text-sm text-gray-600 mt-2">Your Secure Tracking ID is:</p>
+
+                    <div id="displayTrackingId"
+                        class="bg-gray-100 p-3 rounded-lg font-mono text-2xl font-bold text-blue-700 mt-2 border border-blue-200">
+                    </div>
+
+                    <p class="text-xs text-red-500 mt-3 font-semibold mb-6">Please save this ID to track your status
+                        later.</p>
+                    <button onclick="resetForm()"
+                        class="text-sm text-blue-600 font-semibold hover:underline cursor-pointer">Submit Another
+                        Issue</button>
+                </div>
+            </div>
+
+            <!-- ============================== -->
+            <!-- 2. TRACK STATUS SECTION        -->
+            <!-- ============================== -->
+            <div id="trackTab" class="hidden fade-in">
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-2">Enter Tracking ID</label>
+                    <input type="text" id="trackingInput" placeholder="e.g. MUST-A1B2C3"
+                        class="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-blue-500 uppercase font-mono">
+                    <p id="trackingError" class="hidden text-red-500 text-sm mt-2 font-semibold fade-in">
+                        Tracking ID not found. Please try again.
+                    </p>
+                </div>
+
+                <button id="trackBtn" onclick="checkStatus()"
+                    class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 rounded-lg shadow-md cursor-pointer">
+                    Check Status
+                </button>
+
+                <!-- Status Output Box -->
+                <div id="statusResult" class="hidden mt-6 p-4 border rounded-lg bg-gray-50 fade-in">
+                    <p class="text-sm text-gray-500">Current Status:</p>
+                    <p id="resultText" class="text-lg font-bold text-blue-700 mt-1"></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 text-center text-xs text-gray-500">
+        <p>&copy; MU Grievance Portal</p>
+        <p class="mt-1">Developed by <span class="font-semibold text-gray-700">Sumit Debnath</span> & <span
+                class="font-semibold text-gray-700">Md. Masum Ahmed</span></p>
+    </div>
+
+    <!-- Simple JavaScript Logic -->
+    <script>
+        // Local variable to store data until we connect the real Python backend
+        const serverDatabase = {};
+
+        // Function to switch between Submit and Track tabs
+        function switchTab(tabName) {
+            const submitTab = document.getElementById('submitTab');
+            const trackTab = document.getElementById('trackTab');
+            const btnSubmit = document.getElementById('btn-submitTab');
+            const btnTrack = document.getElementById('btn-trackTab');
+
+            // Hide all errors when switching tabs
+            document.getElementById('trackingError').classList.add('hidden');
+            document.getElementById('statusResult').classList.add('hidden');
+            document.getElementById('validationError').classList.add('hidden');
+
+            if (tabName === 'submitTab') {
+                submitTab.classList.remove('hidden');
+                trackTab.classList.add('hidden');
+
+                // Highlight Submit button
+                btnSubmit.className = "w-1/2 py-3 text-center font-semibold text-blue-600 border-b-2 border-blue-600 hover:bg-blue-50 cursor-pointer";
+                btnTrack.className = "w-1/2 py-3 text-center font-semibold text-gray-500 hover:text-blue-600 hover:bg-gray-50 cursor-pointer";
+            } else {
+                trackTab.classList.remove('hidden');
+                submitTab.classList.add('hidden');
+
+                // Highlight Track button
+                btnTrack.className = "w-1/2 py-3 text-center font-semibold text-blue-600 border-b-2 border-blue-600 hover:bg-blue-50 cursor-pointer";
+                btnSubmit.className = "w-1/2 py-3 text-center font-semibold text-gray-500 hover:text-blue-600 hover:bg-gray-50 cursor-pointer";
+            }
+        }
+
+        // Function to handle complaint submission
+        function handleSubmission(event) {
+            event.preventDefault(); // Prevent page refresh
+
+            const btn = document.getElementById('submitBtn');
+            const descriptionText = document.getElementById('description').value;
+            const errorMsg = document.getElementById('validationError');
+
+            // Check if input is empty
+            if (descriptionText.trim() === "") {
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            btn.innerText = "Sending to Server...";
+            btn.disabled = true;
+
+            // Wait 1 second to simulate server processing
+            setTimeout(function () {
+                // Generate a random tracking ID (MUST-XXXXXX)
+                const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                const trackingId = "MUST-" + randomCode;
+
+                // Save it into our frontend memory database so we can track it!
+                serverDatabase[trackingId] = "Pending";
+
+                // Show success screen
+                document.getElementById('displayTrackingId').innerText = trackingId;
+                document.getElementById('grievanceForm').classList.add('hidden');
+                document.getElementById('successMessage').classList.remove('hidden');
+
+                btn.innerText = "Submit Anonymously";
+                btn.disabled = false;
+            }, 1000);
+        }
+
+        // Function to go back to the submit form
+        function resetForm() {
+            document.getElementById('grievanceForm').reset();
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('grievanceForm').classList.remove('hidden');
+        }
+
+        // Function to check status
+        function checkStatus() {
+            const inputField = document.getElementById('trackingInput');
+            const trackingId = inputField.value.trim().toUpperCase();
+
+            const errorMsg = document.getElementById('trackingError');
+            const resultBox = document.getElementById('statusResult');
+            const trackBtn = document.getElementById('trackBtn');
+
+            errorMsg.classList.add('hidden');
+            resultBox.classList.add('hidden');
+            inputField.classList.remove('border-red-500');
+
+            // Check if input is empty
+            if (trackingId === "") {
+                errorMsg.classList.remove('hidden');
+                inputField.classList.add('border-red-500');
+                return;
+            }
+
+            trackBtn.disabled = true;
+            trackBtn.innerText = "Searching Database...";
+
+            // Wait 1 second to simulate server loading
+            setTimeout(function () {
+                trackBtn.disabled = false;
+                trackBtn.innerText = "Check Status";
+
+                // Look inside our memory database
+                if (serverDatabase[trackingId]) {
+                    // Update text with exact status from database!
+                    document.getElementById('resultText').innerText = serverDatabase[trackingId];
+                    resultBox.classList.remove('hidden');
+                } else {
+                    // Show error if ID is completely wrong
+                    errorMsg.classList.remove('hidden');
+                    inputField.classList.add('border-red-500');
+                }
+            }, 800);
+        }
+
+        // Hide error message when student types again
+        document.getElementById('trackingInput').addEventListener('input', function () {
+            document.getElementById('trackingError').classList.add('hidden');
+            document.getElementById('statusResult').classList.add('hidden');
+            this.classList.remove('border-red-500');
+        });
+    </script>
+</body>
+
+</html>
