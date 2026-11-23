@@ -3,252 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
     <title>Admin Dashboard | MU Grievance Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .fade-in {
-            animation: fadeIn 0.4s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
 
-    <!-- ============================== -->
-    <!-- 1. LOGIN SECTION (POST to API) -->
-    <!-- ============================== -->
     {% if not logged_in %}
-    <div id="loginSection" class="flex flex-col items-center justify-center flex-grow p-4 fade-in">
-        <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100 w-full max-w-sm">
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Admin Portal</h2>
-                <p class="text-xs text-gray-500 mt-1">Metropolitan University</p>
+    <!-- Admin Login View -->
+    <div class="flex-grow flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            <div class="bg-blue-700 text-white p-6 text-center">
+                <h1 class="text-xl font-bold">MU Admin Portal</h1>
+                <p class="text-xs opacity-80 mt-1">Proctor &amp; DSW Login</p>
             </div>
-
-            <form action="/admin/login" method="POST">
-                <div class="mb-4">
-                    <label for="adminId" class="block text-sm font-semibold mb-2 text-gray-700">Admin ID</label>
-                    <input
-                        type="text"
-                        id="adminId"
-                        name="username"
-                        required
-                        autocomplete="username"
-                        placeholder="Enter Admin ID"
-                        class="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-blue-500 text-sm"
-                    >
+            <div class="p-6">
+                {% if error %}
+                    <div class="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm font-semibold text-center">{{ error }}</div>
+                {% endif %}
+                <form action="/admin/login" method="POST">
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-1">Admin ID</label>
+                        <input type="text" name="username" required placeholder="proctor or dsw" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:border-blue-500">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold mb-1">Password</label>
+                        <input type="password" name="password" required placeholder="••••••••" class="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:border-blue-500">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-lg transition-colors cursor-pointer">
+                        Sign In
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <a href="/" class="text-xs text-blue-600 hover:underline">&larr; Back to Student Portal</a>
                 </div>
-                <div class="mb-6">
-                    <label for="adminPass" class="block text-sm font-semibold mb-2 text-gray-700">Password</label>
-                    <input
-                        type="password"
-                        id="adminPass"
-                        name="password"
-                        required
-                        autocomplete="current-password"
-                        placeholder="Enter Password"
-                        class="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-blue-500 text-sm"
-                    >
-                </div>
-                <button
-                    type="submit"
-                    id="loginBtn"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition cursor-pointer"
-                >
-                    Login
-                </button>
-            </form>
-
-            {% if error %}
-            <p id="loginError" class="text-red-500 text-xs text-center mt-3 font-semibold">
-                {{ error }}
-            </p>
-            {% endif %}
+            </div>
         </div>
     </div>
-    {% endif %}
 
-    <!-- ============================== -->
-    <!-- 2. DASHBOARD SECTION           -->
-    <!-- ============================== -->
-    {% if logged_in %}
-    <div id="dashboardSection" class="flex flex-col flex-grow fade-in">
-
-        <!-- Navigation Bar -->
-        <nav class="bg-blue-700 text-white shadow-md">
-            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                <div class="font-bold text-lg">MU Grievance Admin</div>
-                <div class="flex items-center gap-4">
-                    {% if role %}
-                    <span id="adminRoleDisplay" class="bg-blue-800 px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
-                        {{ role }}
-                    </span>
-                    {% endif %}
-                    <form action="/admin/logout" method="POST" class="inline">
-                        <button
-                            type="submit"
-                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-semibold transition cursor-pointer"
-                        >
-                            Logout
-                        </button>
-                    </form>
-                </div>
+    {% else %}
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-700 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <div class="font-bold text-lg">MU Grievance Admin Dashboard</div>
+                {% if role %}
+                    <div class="text-xs text-blue-200">{{ role }}</div>
+                {% endif %}
             </div>
-        </nav>
+            <a href="/admin/logout" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-semibold">Logout</a>
+        </div>
+    </nav>
 
-        <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
-
-            <!-- Top Summary Cards -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Overview Statistics</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-blue-500">
-                        <p class="text-sm text-gray-500 font-semibold">Total Complaints</p>
-                        <p id="statTotal" class="text-3xl font-bold mt-1">{{ stats.total if stats else 0 }}</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-yellow-500">
-                        <p class="text-sm text-gray-500 font-semibold">Pending Issues</p>
-                        <p id="statPending" class="text-3xl font-bold mt-1">{{ stats.pending if stats else 0 }}</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-blue-400">
-                        <p class="text-sm text-gray-500 font-semibold">Working On It</p>
-                        <p id="statWorking" class="text-3xl font-bold mt-1">{{ stats.working if stats else 0 }}</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 border-l-4 border-l-green-500">
-                        <p class="text-sm text-gray-500 font-semibold">Solved Issues</p>
-                        <p id="statSolved" class="text-3xl font-bold mt-1">{{ stats.solved if stats else 0 }}</p>
-                    </div>
-                </div>
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
+        {% if stats %}
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <div class="text-xs text-gray-500 uppercase font-semibold">Total</div>
+                <div class="text-2xl font-bold text-gray-800 mt-1">{{ stats.total }}</div>
             </div>
+            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <div class="text-xs text-yellow-600 uppercase font-semibold">Pending</div>
+                <div class="text-2xl font-bold text-yellow-700 mt-1">{{ stats.pending }}</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <div class="text-xs text-blue-600 uppercase font-semibold">Working On It</div>
+                <div class="text-2xl font-bold text-blue-700 mt-1">{{ stats.working }}</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <div class="text-xs text-green-600 uppercase font-semibold">Solved</div>
+                <div class="text-2xl font-bold text-green-700 mt-1">{{ stats.solved }}</div>
+            </div>
+        </div>
+        {% endif %}
 
-            <!-- Complaints Data Table -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                    <h3 class="text-lg font-bold">Incoming Student Reports</h3>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
-                                <th class="px-6 py-3 border-b">Tracking ID</th>
-                                <th class="px-6 py-3 border-b">Category</th>
-                                <th class="px-6 py-3 border-b">Date</th>
-                                <th class="px-6 py-3 border-b">Status</th>
-                                <th class="px-6 py-3 border-b text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="text-sm text-gray-700">
-                            {% for c in complaints %}
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Incoming Student Reports</h2>
+
+        <!-- Complaints Data Table -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
+                            <th class="px-6 py-3 border-b">Tracking ID</th>
+                            <th class="px-6 py-3 border-b">Category</th>
+                            <th class="px-6 py-3 border-b">Description</th>
+                            <th class="px-6 py-3 border-b">Date</th>
+                            <th class="px-6 py-3 border-b">Status</th>
+                            <th class="px-6 py-3 border-b text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm text-gray-700">
+                        {% for c in complaints %}
                             <tr class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-4 font-mono font-bold text-blue-600">{{ c.tracking_id }}</td>
-                                <td class="px-6 py-4">{{ c.category_name if c.category_name is defined else c.category }}</td>
-                                <td class="px-6 py-4 text-gray-500 text-xs">{{ c.created_at }}</td>
+                                <td class="px-6 py-4 font-bold text-blue-600 font-mono">{{ c.tracking_id }}</td>
+                                <td class="px-6 py-4 font-semibold">{{ c.category_name }}</td>
+                                <td class="px-6 py-4 max-w-xs truncate">{{ c.description }}</td>
+                                <td class="px-6 py-4 text-gray-500">
+                                    {{ c.created_at.strftime('%b %d, %Y') if c.created_at else 'Just now' }}
+                                </td>
                                 <td class="px-6 py-4">
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold
-                                        {% if c.status == 'Pending' %}bg-yellow-100 text-yellow-700
-                                        {% elif c.status == 'Working on it' %}bg-blue-100 text-blue-700
-                                        {% else %}bg-green-100 text-green-700{% endif %}">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold 
+                                        {% if c.status == 'Pending' %} bg-yellow-100 text-yellow-700
+                                        {% elif c.status == 'Working on it' %} bg-blue-100 text-blue-700
+                                        {% else %} bg-green-100 text-green-700 {% endif %}">
                                         {{ c.status }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <button
-                                        type="button"
-                                        onclick='openModal({{ c.tracking_id | tojson }}, {{ (c.category_name if c.category_name is defined else c.category) | tojson }}, {{ c.description | tojson }}, {{ c.status | tojson }})'
-                                        class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-1 rounded text-xs font-semibold transition cursor-pointer"
-                                    >
-                                        View
-                                    </button>
+                                    <form action="/admin/update-status/{{ c.tracking_id }}" method="POST" class="inline-flex gap-2 items-center">
+                                        <select name="status" class="border border-gray-300 rounded px-2 py-1 text-xs bg-white">
+                                            <option value="Pending" {% if c.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                            <option value="Working on it" {% if c.status == 'Working on it' %}selected{% endif %}>Working on it</option>
+                                            <option value="Solved" {% if c.status == 'Solved' %}selected{% endif %}>Solved</option>
+                                        </select>
+                                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-semibold">Update</button>
+                                    </form>
                                 </td>
                             </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                                    No complaints reported yet.
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- ============================== -->
-    <!-- 3. REVIEW MODAL POPUP          -->
-    <!-- ============================== -->
-    <div id="statusModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
-        <div class="absolute inset-0" onclick="closeModal()"></div>
-
-        <div class="bg-white rounded-lg w-full max-w-md overflow-hidden relative z-10 fade-in">
-            <div class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center">
-                <h3 class="font-bold">Review & Update Status</h3>
-                <button type="button" onclick="closeModal()" class="text-white hover:text-red-200 text-2xl font-bold cursor-pointer">&times;</button>
-            </div>
-
-            <div class="p-6">
-                <form id="updateForm" method="POST">
-                    <p class="text-sm text-gray-500 mb-2">
-                        ID: <span id="modalId" class="font-mono font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded"></span>
-                    </p>
-                    <p class="text-sm text-gray-500 mb-4">
-                        Category: <span id="modalCategory" class="font-semibold text-gray-800"></span>
-                    </p>
-
-                    <div class="mb-4">
-                        <p class="block text-sm font-semibold mb-1">Student Description:</p>
-                        <div id="modalDescription" class="w-full bg-gray-50 border border-gray-200 rounded p-3 text-sm whitespace-pre-wrap max-h-48 overflow-y-auto"></div>
-                    </div>
-
-                    <label for="modalStatusSelect" class="block text-sm font-semibold mb-2">Modify Status</label>
-                    <select
-                        id="modalStatusSelect"
-                        name="status"
-                        class="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-blue-500 bg-white mb-4 cursor-pointer text-sm"
-                    >
-                        {% if statuses %}
-                            {% for s in statuses %}
-                            <option value="{{ s }}">{{ s }}</option>
-                            {% endfor %}
                         {% else %}
-                            <option value="Pending">Pending</option>
-                            <option value="Working on it">Working on it</option>
-                            <option value="Solved">Solved</option>
-                        {% endif %}
-                    </select>
-
-                    <div class="flex justify-end gap-3">
-                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded font-semibold text-sm cursor-pointer">
-                            Cancel
-                        </button>
-                        <button type="submit" id="saveStatusBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-sm cursor-pointer">
-                            Save Status
-                        </button>
-                    </div>
-                </form>
+                            <tr>
+                                <td colspan="6" class="text-center py-6 text-gray-500">No complaints found in the database.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
-
-    <script>
-        function openModal(trackingId, category, description, status) {
-            document.getElementById("modalId").textContent = trackingId;
-            document.getElementById("modalCategory").textContent = category;
-            document.getElementById("modalDescription").textContent = description;
-            document.getElementById("modalStatusSelect").value = status;
-            document.getElementById("updateForm").action = "/admin/update/" + encodeURIComponent(trackingId);
-            document.getElementById("statusModal").classList.remove("hidden");
-        }
-
-        function closeModal() {
-            document.getElementById("statusModal").classList.add("hidden");
-        }
-    </script>
+    </main>
     {% endif %}
 
 </body>
